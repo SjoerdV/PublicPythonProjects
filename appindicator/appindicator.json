@@ -1,0 +1,10 @@
+{
+  "Processes": [
+    {
+      "Name": "gpg-agent"
+    },
+    {
+      "Name": "pwsh"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+  ],
+  "settings": {
+    "python.testing.pytestEnabled": true,
+    "cSpell.enableFiletypes": [
+      "!python"
+    ]
+  }
+}
