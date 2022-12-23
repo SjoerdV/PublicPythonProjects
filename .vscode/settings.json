@@ -11,5 +11,8 @@
     "markdown",
     "latex",
     "plaintext"
+  ],
+  "cSpell.enableFiletypes": [
+    "!python"
   ]
 }
