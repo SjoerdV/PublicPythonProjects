@@ -4,6 +4,9 @@
       "Name": "gpg-agent"
     },
     {
+      "Name": "timeshift"
+    },
+    {
       "Name": "pwsh"
     }
   ]
