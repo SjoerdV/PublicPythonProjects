@@ -1,0 +1,19 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "add_keywords", // Add a keyboard shortcut for this task. Ex. CTRL+SHIFT+F10
+      "type": "shell",
+      "command": "python3 add_keyphrases_to_jekyll_blog_post.py -i \"${file}\"",
+      "options": {
+        "cwd": "${workspaceFolder}/.vscode/scripts" // Change this path to where you want this script to be located in your VSCode solution
+      },
+      "presentation": {
+        "reveal": "never",
+        "focus": true
+      }
+    }
+  ]
+}
