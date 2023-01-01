@@ -32,11 +32,16 @@ Prerequisites:
 * pip install keybert
 
 References:
-* VSCode, Run multiple statements for one action: https://github.com/microsoft/vscode/issues/871#issuecomment-488355245
-* Clean Markdown to Plain Text: https://stackoverflow.com/a/761847
-* Combining KeyBERT and KeyphraseVectorizers: https://towardsdatascience.com/enhancing-keybert-keyword-extraction-results-with-keyphrasevectorizers-3796fa93f4db
-* KeyBERT introduce diversity in resulting keywords: https://towardsdatascience.com/how-to-extract-relevant-keywords-with-keybert-6e7b3cf889ae
-* PascalCase: https://stackoverflow.com/questions/8347048/how-to-convert-string-to-title-case-in-python
+* Workflow stuff
+** VSCode, Run multiple statements for one action: https://github.com/microsoft/vscode/issues/871#issuecomment-488355245
+** Clean Markdown to Plain Text: https://stackoverflow.com/a/761847
+** PascalCase: https://stackoverflow.com/questions/8347048/how-to-convert-string-to-title-case-in-python
+* NLP stuff
+** Beautiful Soup: https://www.crummy.com/software/BeautifulSoup/
+** KeyphraseVectorizers: https://github.com/TimSchopf/KeyphraseVectorizers
+** KeyBert: https://github.com/MaartenGr/keyBERT
+** Combining KeyBERT and KeyphraseVectorizers: https://towardsdatascience.com/enhancing-keybert-keyword-extraction-results-with-keyphrasevectorizers-3796fa93f4db
+** KeyBERT introduce diversity in resulting keywords: https://towardsdatascience.com/how-to-extract-relevant-keywords-with-keybert-6e7b3cf889ae
 
 Image Sources:
 None
@@ -52,8 +57,8 @@ Tested on:
 ** Python3: 3.9.5
 
 Example:
-add_keyphrases_to_jekyll_blog_post.py -i "/home/user/full_path_to_jekyll_site/_posts/2022-12-21-post-my-post.md"
-This will start the process of adding keywords to the YAML frontmatter of the post.
+add_keyphrases_to_jekyll_blog_post.py -i "/home/user/full_path_to_jekyll_site/_posts/2022-12-21-post-my-post.md" -c 15 -m "en_core_web_sm"
+This will start the process of adding 15 keywords to the YAML frontmatter of the post using the default English language spacy nlp model.
 """
 
 
@@ -66,6 +71,7 @@ from io import BytesIO
 from markdown import markdown
 from bs4 import BeautifulSoup
 import frontmatter
+import spacy
 from keyphrase_vectorizers import KeyphraseCountVectorizer
 from keybert import KeyBERT
 
@@ -93,27 +99,43 @@ def main(argv):
     """
     # Processing CLI input
     input_file_path: str | None = None
+    numberof_phrases: int | None = None
+    spacy_language_model: str | None = None
     try:
-        opts, args = getopt.getopt(argv,"hi:",["help","in="])
+        opts, args = getopt.getopt(argv,"hi:c:m:",["help","in=","count=","model="])
     except getopt.GetoptError:
-        print ('add_keyphrases_to_jekyll_blog_post.py -i <input_absolute_file_path>')
+        print ('add_keyphrases_to_jekyll_blog_post.py -i <input_absolute_file_path> -c <number_of_keyphrases> -m <spacy_language_model>')
         sys.exit(2)
     if not opts:
-        print ('add_keyphrases_to_jekyll_blog_post.py -i <input_absolute_file_path>')
+        print ('add_keyphrases_to_jekyll_blog_post.py -i <input_absolute_file_path> -c <number_of_keyphrases> -m <spacy_language_model>')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print ('add_keyphrases_to_jekyll_blog_post.py -i <input_absolute_file_path>')
+            print ('add_keyphrases_to_jekyll_blog_post.py -i <input_absolute_file_path> -c <number_of_keyphrases> -m <spacy_language_model>')
             sys.exit()
         elif opt in ("-i", "--in"):
             try:
-                input_file_path = arg
-                str(arg)
+                input_file_path = str(arg)
             except Exception as error:
                 print(error)
                 sys.exit(2)
             if re.search(r'.md$',input_file_path) is None:
                 print ('Input file is not a markdown file (with .md extension). Exiting...')
+                sys.exit(2)
+        elif opt in ("-c", "--count"):
+            try:
+                numberof_phrases = int(arg)
+            except Exception as error:
+                print(error)
+                sys.exit(2)
+            if numberof_phrases < 1:
+                print ('Please generate a positive number of key phrases. Exiting...')
+                sys.exit(2)
+        elif opt in ("-m", "--model"):
+            try:
+                spacy_language_model = str(arg)
+            except Exception as error:
+                print(error)
                 sys.exit(2)
     print ('Input file path is:', input_file_path, '\r\n')
 
@@ -147,8 +169,15 @@ def main(argv):
         docs = []
         docs.append(plain_text_md)
 
+        #Try to load space Model
+        try:
+            nlp = spacy.load(spacy_language_model)
+        except Exception as error:
+            print(error)
+            sys.exit(2)
+
         # Init default vectorizer
-        vectorizer = KeyphraseCountVectorizer()
+        vectorizer = KeyphraseCountVectorizer(spacy_pipeline=nlp)
 
         # Fit the vectorizer with key phrases from the document
         vectorizer.fit(docs)
@@ -162,7 +191,7 @@ def main(argv):
 
         # Use keyphrase vectorizer to decide on suitable keyphrases
         # adding ', use_mmr=True, diversity=0.3' to the settings and varying the diversity may prove useful at some point.
-        keyphrases = kw_model.extract_keywords(docs=docs, top_n=15, vectorizer=KeyphraseCountVectorizer())
+        keyphrases = kw_model.extract_keywords(docs=docs, top_n=numberof_phrases, vectorizer=KeyphraseCountVectorizer())
         print("\r\nKeyBERT Key Phrases:",keyphrases)
 
         # Transform key phrases to PascalCase

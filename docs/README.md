@@ -28,10 +28,13 @@ At the moment the following Projects are available.
 
 * [svg2png](https://github.com/SjoerdV/PublicPythonProjects/tree/main/svg2png)
   * this program will convert any svg image to png. For more information see `svg2png.py`.
+  * Reference: [Blog Post](https://www.spdevalk.nl/blog/post-a-new-public-github-repository-python/)
 * [appindicator](https://github.com/SjoerdV/PublicPythonProjects/tree/main/appindicator)
   * this program will run a system tray icon which will detect if a certain process is running. It reports to the Desktop notification area and change the trays color when the process is found (or killed). It also features a right click context menu to kill all the processes of the kind it is monitoring. For more information see `appindicator.py`.
+  * Reference: [Blog Post](https://www.spdevalk.nl/blog/post-a-new-public-github-repository-python/)
 * [add_keyphrases_to_jekyll_blog_post](https://github.com/SjoerdV/PublicPythonProjects/tree/main/add_keyphrases_to_jekyll_blog_post)
-  * this program will add or update the 'tags' metadata key that can be found in the YAML frontmatter of Jekyll static website pages. These pages are markdown formatted pages (with .md extension) and contains liquid elements and said YAML frontmatter. The KeyBERT and KeyphraseVectorizers modelling tools are used to generate these tags. Extensive documentation is available for both these tools to further your implementation.
+  * this program will add or update the 'tags' metadata key that can be found in the YAML frontmatter of Jekyll static website pages. These pages are markdown formatted pages (with .md extension) and contains liquid elements and said YAML frontmatter. The KeyBERT and KeyphraseVectorizers modelling tools are used to generate these tags. Extensive documentation is available for both these tools to further your implementation. For more information see `add_keyphrases_to_jekyll_blog_post.py`.
+  * Reference: [Blog Post](https://www.spdevalk.nl/blog/post-adding-key-phrases-to-jekyll-blog-posts-_-the-offline-edition/)
 
 ### Changelog
 
@@ -46,7 +49,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ##### Added
 
-* Initial Release
+* Initial Release with initial project folder structure.
 
 ##### Changed
 
