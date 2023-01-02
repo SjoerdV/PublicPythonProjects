@@ -57,8 +57,8 @@ Tested on:
 ** Python3: 3.9.5
 
 Example:
-add_keyphrases_to_jekyll_blog_post.py -i "/home/user/full_path_to_jekyll_site/_posts/2022-12-21-post-my-post.md" -c 15 -m "en_core_web_sm"
-This will start the process of adding 15 keywords to the YAML frontmatter of the post using the default English language spacy nlp model.
+add_keyphrases_to_jekyll_blog_post.py -i "/home/user/full_path_to_jekyll_site/_posts/2022-12-21-post-my-post.md"
+This will start the process of adding keywords to the YAML frontmatter of the post using the settings specified in the 'nlp.json' file.
 """
 
 
@@ -67,17 +67,17 @@ from __future__ import annotations
 import sys
 import getopt
 import re
+import json
 from io import BytesIO
 from markdown import markdown
 from bs4 import BeautifulSoup
 import frontmatter
-import spacy
 from keyphrase_vectorizers import KeyphraseCountVectorizer
 from keybert import KeyBERT
 
 
 # Define functions
-def md_to_text(md):
+def md_to_text(md_text):
     """_summary_
 
     Args:
@@ -86,7 +86,7 @@ def md_to_text(md):
     Returns:
         _type_: _description_
     """
-    html = markdown(md)
+    html = markdown(md_text)
     soup = BeautifulSoup(html, features='lxml')
     return soup.get_text()
 
@@ -97,21 +97,25 @@ def main(argv):
     Args:
         argv (_type_): _description_
     """
-    # Processing CLI input
+    # Init Variables
     input_file_path: str | None = None
+    help_message: str = 'add_keyphrases_to_jekyll_blog_post.py -i <input_absolute_file_path>'
     numberof_phrases: int | None = None
-    spacy_language_model: str | None = None
+    keyphrase_count_vectorizer_args: dict | None = None
+    keybert_args: dict | None = None
+
+    # Processing CLI input
     try:
-        opts, args = getopt.getopt(argv,"hi:c:m:",["help","in=","count=","model="])
+        opts, args = getopt.getopt(argv,"hi:",["help","in="])
     except getopt.GetoptError:
-        print ('add_keyphrases_to_jekyll_blog_post.py -i <input_absolute_file_path> -c <number_of_keyphrases> -m <spacy_language_model>')
+        print(help_message)
         sys.exit(2)
     if not opts:
-        print ('add_keyphrases_to_jekyll_blog_post.py -i <input_absolute_file_path> -c <number_of_keyphrases> -m <spacy_language_model>')
+        print(help_message)
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print ('add_keyphrases_to_jekyll_blog_post.py -i <input_absolute_file_path> -c <number_of_keyphrases> -m <spacy_language_model>')
+            print(help_message)
             sys.exit()
         elif opt in ("-i", "--in"):
             try:
@@ -120,24 +124,26 @@ def main(argv):
                 print(error)
                 sys.exit(2)
             if re.search(r'.md$',input_file_path) is None:
-                print ('Input file is not a markdown file (with .md extension). Exiting...')
-                sys.exit(2)
-        elif opt in ("-c", "--count"):
-            try:
-                numberof_phrases = int(arg)
-            except Exception as error:
-                print(error)
-                sys.exit(2)
-            if numberof_phrases < 1:
-                print ('Please generate a positive number of key phrases. Exiting...')
-                sys.exit(2)
-        elif opt in ("-m", "--model"):
-            try:
-                spacy_language_model = str(arg)
-            except Exception as error:
-                print(error)
+                print('Input file is not a markdown file (with .md extension). Exiting...')
                 sys.exit(2)
     print ('Input file path is:', input_file_path, '\r\n')
+
+    # Load JSON settings
+    ## Opening JSON settings file
+    json_data_file = open('nlp.json',encoding="utf8")
+    ## Returns JSON object as a dictionary
+    json_object = json.load(json_data_file)
+
+    # Set NLP Variables
+    try:
+        numberof_phrases = int(json_object['settings']['key_phrase_output_count'])
+        keyphrase_count_vectorizer_args = json_object['settings']['nlp_models'][0]['arguments']
+        print(keyphrase_count_vectorizer_args)
+        keybert_args = json_object['settings']['nlp_models'][1]['arguments']
+        print(keybert_args)
+    except Exception as error:
+        print(error)
+        sys.exit(2)
 
     # Open the Post Markdown file
     post = frontmatter.load(input_file_path)
@@ -169,15 +175,13 @@ def main(argv):
         docs = []
         docs.append(plain_text_md)
 
-        #Try to load space Model
-        try:
-            nlp = spacy.load(spacy_language_model)
-        except Exception as error:
-            print(error)
-            sys.exit(2)
-
         # Init default vectorizer
-        vectorizer = KeyphraseCountVectorizer(spacy_pipeline=nlp)
+        try:
+            #keyphrase_count_vectorizer_args[0] = nlp
+            vectorizer = KeyphraseCountVectorizer(**keyphrase_count_vectorizer_args)
+        except Exception as error:
+            print("KeyphraseCountVectorizer error:", error)
+            sys.exit(2)
 
         # Fit the vectorizer with key phrases from the document
         vectorizer.fit(docs)
@@ -187,11 +191,15 @@ def main(argv):
         print("\r\nVectorized Key Phrases:",vectorized_keyphrases)
 
         # Init KeyBERT
-        kw_model = KeyBERT()
+        try:
+            kw_model = KeyBERT(**keybert_args)
+        except Exception as error:
+            print("KeyBERT error:", error)
+            sys.exit(2)
 
         # Use keyphrase vectorizer to decide on suitable keyphrases
         # adding ', use_mmr=True, diversity=0.3' to the settings and varying the diversity may prove useful at some point.
-        keyphrases = kw_model.extract_keywords(docs=docs, top_n=numberof_phrases, vectorizer=KeyphraseCountVectorizer())
+        keyphrases = kw_model.extract_keywords(docs=docs, top_n=numberof_phrases, vectorizer=vectorizer)
         print("\r\nKeyBERT Key Phrases:",keyphrases)
 
         # Transform key phrases to PascalCase

@@ -1,0 +1,20 @@
+{
+  "settings": {
+    "nlp_models": [
+      {
+        "name": "KeyphraseVectorizers",
+        "arguments": {
+          "spacy_pipeline": "en_core_web_sm",
+          "lowercase": true
+        }
+      },
+      {
+        "name": "KeyBERT",
+        "arguments": {
+          "model": "all-MiniLM-L6-v2"
+        }
+      }
+    ],
+    "key_phrase_output_count": 15
+  }
+}
