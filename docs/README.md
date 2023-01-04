@@ -35,6 +35,9 @@ At the moment the following Projects are available.
 * [add_keyphrases_to_jekyll_blog_post](https://github.com/SjoerdV/PublicPythonProjects/tree/main/add_keyphrases_to_jekyll_blog_post)
   * this program will add or update the 'tags' metadata key that can be found in the YAML frontmatter of Jekyll static website pages. These pages are markdown formatted pages (with .md extension) and contains liquid elements and said YAML frontmatter. The KeyBERT and KeyphraseVectorizers modeling tools, being fed their configuration through an external JSON file, are used to generate these tags. Extensive documentation is available for both these tools to further your implementation. For more information see `add_keyphrases_to_jekyll_blog_post.py`.
   * Reference: [Blog Post](https://www.spdevalk.nl/blog/post-adding-key-phrases-to-jekyll-blog-posts-_-the-offline-edition/)
+* [mastodon_archiver](https://github.com/SjoerdV/PublicPythonProjects/tree/main/mastodon_archiver)
+  * this program will make backups of your mastodon account(s) and clean-up certain collections that are more than 8 weeks old.
+  * Reference: [Original Repo](https://github.com/kensanata/mastodon-archive)
 
 ### Changelog
 
