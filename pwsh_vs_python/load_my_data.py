@@ -1,7 +1,6 @@
 import json
-# Opening JSON file
-jsondatafile = open('my_data.json',encoding="utf8")
-# Returns JSON object as a dictionary
-jsonobject = json.load(jsondatafile)
+# Load JSON settings
+with open('my_data.json', 'r',encoding='utf8') as json_data_file:
+    json_object = json.load(json_data_file)
 # Display value
-print(jsonobject['Programs'][0]['Name'])
+print(json_object['Programs'][0]['Name'])

@@ -129,10 +129,8 @@ def main(argv):
     print ('Input file path is:', input_file_path, '\r\n')
 
     # Load JSON settings
-    ## Opening JSON settings file
-    json_data_file = open('nlp.json',encoding="utf8")
-    ## Returns JSON object as a dictionary
-    json_object = json.load(json_data_file)
+    with open('nlp.json', 'r',encoding='utf8') as json_data_file:
+        json_object = json.load(json_data_file)
 
     # Set NLP Variables
     try:
@@ -215,10 +213,9 @@ def main(argv):
         # Write updated post to disk
         file_io = BytesIO()
         frontmatter.dump(post, file_io)
-        text_file = open(input_file_path, "w", encoding="utf-8")
-        update_file = text_file.write(file_io.getvalue().decode('utf-8'))
-        text_file.close()
 
+        with open(input_file_path, 'w',encoding='utf8') as text_file:
+            update_file = text_file.write(file_io.getvalue().decode('utf-8'))
 
 # Start main thread
 if __name__ == "__main__":

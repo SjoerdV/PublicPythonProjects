@@ -206,16 +206,15 @@ def main(argv):
                 sys.exit(2)
     print ('Input item number is:', input_item_number)
 
-    # Opening JSON file
-    jsondatafile = open('appindicator.json',encoding="utf8")
-    # Returns JSON object as a dictionary
-    jsonobject = json.load(jsondatafile)
+    # Load JSON settings
+    with open('appindicator.json', 'r',encoding='utf8') as json_data_file:
+        json_object = json.load(json_data_file)
 
     # Fetching the right index from the list of processes in the JSON file
     try:
-        process = jsonobject['Processes'][int(input_item_number)]
+        process = json_object['Processes'][int(input_item_number)]
     except Exception as e:
-        print(e,"\nThe JSON file only has",len(jsonobject['Processes']),"items, starting with index 0")
+        print(e,"\nThe JSON file only has",len(json_object['Processes']),"items, starting with index 0")
         sys.exit(2)
 
     # Get name variables

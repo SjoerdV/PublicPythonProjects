@@ -91,14 +91,13 @@ def main(argv):
     settings_file_name = "../mastodon.json"
     if os.path.exists(settings_file_name) is False:
         settings_file_name = "./mastodon.json"
-    ## Opening JSON settings file
     try:
-        json_data_file = open(settings_file_name,encoding="utf8")
+        # Load JSON settings
+        with open(settings_file_name, 'r',encoding='utf8') as json_data_file:
+            json_object = json.load(json_data_file)
     except Exception as error:
         print(error)
         sys.exit()
-    ## Returns JSON object as a dictionary
-    json_object = json.load(json_data_file)
 
     try:
         cmd = "mastodon-archive -h"
