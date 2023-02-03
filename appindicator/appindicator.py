@@ -59,6 +59,7 @@ import sys
 import getopt
 import threading
 import time
+import logging
 import json
 import re
 import psutil
@@ -93,16 +94,43 @@ def find_procs(process):
         return None
 
 
-def set_image(icon,im):
+def set_image(icon, image):
     """_summary_
 
     Args:
         icon (_type_): _description_
         im (str): _description_
     """
-    img = PIL.Image.open(im)
+    img = PIL.Image.open(image)
     icon.icon = img
     icon.visible = True
+
+
+def kill_all(icon, item):
+    """_summary_
+
+    Args:
+        icon (_type_): _description_
+        item (_type_): _description_
+    """
+
+    PROCNAME = re.match('.*\'(.*)\'', str(item))[1]
+    my_processes = find_procs(PROCNAME)
+    if my_processes is None:
+        logging.info(f"Process '{PROCNAME}' not found. Continuing watching...")
+    else:
+        procs = []
+        while my_processes is not None:
+            for my_process in my_processes:
+                logging.info(f'Killing process: {PROCNAME} with PID: {my_process.pid}')
+                procs.append(my_process.pid)
+                my_process.kill()
+                logging.info(f"Done!")
+                time.sleep(1)
+            my_processes = find_procs(PROCNAME)
+        if icon.HAS_NOTIFICATION:
+            msg = "Killed process: "+PROCNAME+" with PID(s): "+str(procs)
+            icon.notify(msg)
 
 
 def setup(icon):
@@ -111,31 +139,35 @@ def setup(icon):
     Args:
         icon (_type_): _description_
     """
-    status = 'none'
+    STATUS = 'none'
+    PROCNAME = re.match('appindicator-(.*)', str(icon.title))[1]
     try:
         while not exit_event.is_set():  # This exits the loop if exit is ever set -> program was quit
-            PROCNAME = re.match('appindicator-(.*)', str(icon.title))[1]
-            print("Detecting process:", PROCNAME, "|", status)
+            logging.info(f"Detecting process: {PROCNAME} | {STATUS}")
             my_processes = find_procs(PROCNAME)
             if my_processes is None:
-                if status != 'down':
+                if STATUS != 'down':
                     set_image(icon, "circle_red_arrow-down.png")
-                    print("Process NOT found:", PROCNAME)
-                status = 'down'
+                    logging.info(f"Process NOT found: {PROCNAME}")
+                STATUS = 'down'
             else:
-                if status != 'up':
+                if STATUS != 'up':
                     procs=[]
                     set_image(icon, "circle_green_arrow-up.png")
                 for my_process in my_processes:
                     if my_process.pid not in procs:
                         procs.append(my_process.pid)
-                        print("Process found:", PROCNAME, "with PID", str(my_process.pid))
+                        logging.info(f"Process found: {PROCNAME} with PID %s",str(my_process.pid))
                         if icon.HAS_NOTIFICATION:
-                            msg = PROCNAME+" with PID: "+str(my_process.pid)+" detected!"
+                            msg = f"{PROCNAME} with PID: %s detected!",str(my_process.pid)
                             icon.notify(msg)
-                status = 'up'
+                STATUS = 'up'
             exit_event.wait(1)  # allows exiting while waiting. time.sleep would block
     except (KeyboardInterrupt, SystemExit):
+        logging.info(f"EXITING Gracefully")
+    except:
+        logging.error(f"RESTARTING Forcibly")
+    finally:
         exit_main(icon)
 
 
@@ -150,31 +182,26 @@ def exit_main(icon):
     icon.stop()
 
 
-def kill_all(icon, item):
+def start_main(process_name):
     """_summary_
 
     Args:
-        icon (_type_): _description_
-        item (_type_): _description_
+        process_name (str): _description_
     """
-
-    PROCNAME = re.match('.*\'(.*)\'', str(item))[1]
-    my_processes = find_procs(PROCNAME)
-    if my_processes is None:
-        print("Process '", PROCNAME, "' not found. Continuing watching...")
-    else:
-        procs = []
-        while my_processes is not None:
-            for my_process in my_processes:
-                print("Killing process:", PROCNAME, "with PID:", my_process.pid)
-                procs.append(my_process.pid)
-                my_process.kill()
-                print("Done!")
-                time.sleep(1)
-            my_processes = find_procs(PROCNAME)
-        if icon.HAS_NOTIFICATION:
-            msg = "Killed process: "+PROCNAME+" with PID(s): "+str(procs)
-            icon.notify(msg)
+    # Cleanup
+    exit_event.clear()
+    # Get name variables
+    appindicator_id = "appindicator-" + process_name
+    # Opening tray icon image
+    image = PIL.Image.open("circle_red_arrow-down.png")
+    # Compose tray icon and menu in a thread
+    icon = pystray.Icon(
+        appindicator_id, image, menu=pystray.Menu(
+            pystray.MenuItem("Kill All '"+process_name+"' processes", kill_all),
+            pystray.MenuItem("Exit", exit_main)),
+        title=appindicator_id)
+    # Start the thread
+    icon.run(setup=setup)
 
 
 def main(argv):
@@ -202,33 +229,34 @@ def main(argv):
                 input_item_number = arg
                 int(arg)
             except Exception as e:
-                print(e)
+                logging.error(e)
                 sys.exit(2)
-    print ('Input item number is:', input_item_number)
+    logging.info(f"Input item number is: {input_item_number}")
 
     # Load JSON settings
+    process: str | None = None
     with open('appindicator.json', 'r',encoding='utf8') as json_data_file:
         json_object = json.load(json_data_file)
 
-    # Fetching the right index from the list of processes in the JSON file
-    try:
-        process = json_object['Processes'][int(input_item_number)]
-    except Exception as e:
-        print(e,"\nThe JSON file only has",len(json_object['Processes']),"items, starting with index 0")
-        sys.exit(2)
+        # Fetching the right index from the list of processes in the JSON file
+        try:
+            process = json_object['Processes'][int(input_item_number)]
+        except Exception as e:
+            logging.error("{e}\nThe JSON file only has %s items, starting with index 0",len(json_object['Processes']))
+            sys.exit(2)
 
     # Get name variables
     process_name = process['Name']
-    appindicator_id = "appindicator-" + process_name
-    # Opening tray icon image
-    image = PIL.Image.open("circle_red_arrow-down.png")
-    # Compose tray icon and menu in a thread
-    icon = pystray.Icon(appindicator_id, image, menu=pystray.Menu(
-                pystray.MenuItem("Kill All '"+process_name+"' processes", kill_all),
-                pystray.MenuItem("Exit", exit_main)
-            ),title=appindicator_id)
-    # Start the thread
-    icon.run(setup=setup)
+
+    # Start the program
+    start_main(process_name)
+
+
+# Setup logging
+logging.basicConfig(
+    format='%(asctime)s %(levelname)-8s %(message)s',
+    level=logging.INFO,
+    datefmt='%Y-%m-%d %H:%M:%S')
 
 
 # This event is used to stop the loop.
