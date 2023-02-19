@@ -6,16 +6,19 @@ export DISPLAY=:0
 export XAUTHORITY=$HOME/.Xauthority
 export XDG_RUNTIME_DIR=/run/user/$(id -u)
 export PATH=/home/$(id -nu $(id -u))/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/usr/local/sbin:/usr/sbin:/sbin
+
+logDate=`date +"%Y-%m-%d_%H%M%S"`
+
 if [ -r "$HOME/.dbus/Xdbus" ]; then
   . "$HOME/.dbus/Xdbus"
 fi
 
 if [ -n "$1" ]
 then
-    echo "run from cronjob"
+    echo "${logDate} run from cronjob"
     APPEND="true"
 else
-    echo "first run"
+    echo "${logDate} first run"
     APPEND="false"
 fi
 
