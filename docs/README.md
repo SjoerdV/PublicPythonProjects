@@ -38,6 +38,9 @@ At the moment the following Projects are available.
 * [mastodon_archiver](https://github.com/SjoerdV/PublicPythonProjects/tree/main/mastodon_archiver)
   * this program will make backups of your mastodon account(s) and clean-up certain collections that are more than 8 weeks old.
   * Reference: [Original Repo](https://github.com/kensanata/mastodon-archive)
+* [captcha_generator](https://github.com/SjoerdV/PublicPythonProjects/tree/main/captcha_generator)
+  * this program will create a CAPTCHA version of text entered by you
+  * Reference: [Blog Post](https://www.makeuseof.com/python-captcha-create/)
 
 ### Changelog
 
