@@ -93,6 +93,7 @@ def main(argv):
         settings_file_name = "./mastodon.json"
     try:
         # Load JSON settings
+        input("Press Enter to continue...")
         with open(settings_file_name, 'r',encoding='utf8') as json_data_file:
             json_object = json.load(json_data_file)
     except Exception as error:
@@ -129,6 +130,7 @@ def main(argv):
     print('\r\nExpire Statuses')
     for acc in json_object['accounts']:
         print(acc)
+        print("\r\nBe patient, this can take a LONG time! REF: https://docs.joinmastodon.org/api/rate-limits/#deleting-statuses")
         user=acc['user']
         cmd = f'mastodon-archive expire --older-than 8 --collection statuses --pace {confirm_cmd} {user}' # needs '--confirmed' to work
         os.system(cmd)
