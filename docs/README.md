@@ -41,6 +41,9 @@ At the moment the following Projects are available.
 * [captcha_generator](https://github.com/SjoerdV/PublicPythonProjects/tree/main/captcha_generator)
   * this program will create a CAPTCHA version of text entered by you
   * Reference: [Blog Post](https://www.makeuseof.com/python-captcha-create/)
+* [auto_discussion_for_jekyl_blog_post](https://github.com/SjoerdV/PublicPythonProjects/tree/main/auto_discussion_for_jekyl_blog_post)
+  * this is a script for adding a GitHub Discussion for each Blog Post in a GitHub Pages repository and makes use of GitHub GraphQL. For more information see `auto_discussion_for_jekyl_blog_post.py`.
+  * Reference: [Blog Post](https://www.spdevalk.nl/blog/post-giscus-for-comments/)
 
 ### Changelog
 
@@ -50,6 +53,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 #### [Unreleased]
+
+#### [2.0.0] - 2023-09-05
+
+##### Added
+
+* Added '`add_keyphrases_to_jekyll_blog_post`'
+* Added '`mastodon_archiver`'
+* Added '`captcha_generator`'
+* Added '`auto_discussion_for_jekyl_blog_post`'
+
+##### Changed
+
+* Nothing
+
+##### Removed
+
+* Nothing
+
+### Credits
+
+All Python developers, making this an awesome scripting language.
 
 #### [1.0.0] - 2022-12-21
 
