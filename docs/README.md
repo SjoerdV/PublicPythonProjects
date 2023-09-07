@@ -3,7 +3,7 @@ title:  'Public Python Projects'
 author:
 - Sjoerd de Valk, SPdeValk Consultancy
 date: 2022-12-21 22:35:00
-last_modified_at: 2020-07-08T00:41:58+02:00
+last_modified_at: 2023-09-05T00:41:58+02:00
 keywords: [linux, tooling, markdown, python]
 abstract: |
   This document is about briefly explaining the scripts present in this repository.
