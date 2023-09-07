@@ -57,10 +57,11 @@ import requests
 
 #######################################
 # LOAD ACCESS TOKEN AND OTHER VARIABLES
-# IMPORTANT: You will need to have 'pass' installed and your keyring unlocked, this will fetch the 6 variables securely.
-# IMPORTANT: Variable names should be identical to the 'pass' entry keys (left of the equals sign)
-# PASS ENTRY EXAMPLE (ie. password is always on line 1):
+# IMPORTANT: You will need to have a CLI password tool installed, this will fetch the 6 variables securely.
+# IMPORTANT: Variable names should be identical to your 'password tool' entry keys (left of the equals sign) OR adjust accordingly
+# ENTRY EXAMPLE (ie. password is always on line 1):
 """
+D1ff1cultP4s$w0rd666
 repo_owner=myorg
 blog_repo_name=myorg.github.io
 blogsite_url=https://www.myblogsite.com/
@@ -78,7 +79,7 @@ discussion_category_id = ""
 blogsite_url = ""
 real_requests_post = requests.post
 
-# The below routine is valid when using a CLI password manager like 'pass'
+# The below routine is valid when using my CLI password manager. Adjust accordingly
 p1 = subprocess.Popen(
     ["pass", "github/github-pages-auto-discussion"], stdout=subprocess.PIPE)
 i = 0
