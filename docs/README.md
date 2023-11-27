@@ -20,7 +20,7 @@ permalink: /index.html
 
 ### Summary
 
-This repository contains folders for each Python 3 (compatible with at least version 3.9 and higher) scripting project. The main .py file in each folder will contain all instructions necessary.
+This repository contains folders for each Python 3 (compatible with at least version 3.9 and higher) scripting project. The main `.py` file in each folder will contain all instructions necessary.
 
 I will make an effort to make all scripts cross-platform compatible and test the scripts under both Linux (Debian-based) and Windows. The scripts should also work under MacOS, but I will not test this explicitly (and will never do).
 
