@@ -27,13 +27,18 @@ I will make an effort to make all scripts cross-platform compatible and test the
 At the moment the following Projects are available.
 
 * [svg2png](https://github.com/SjoerdV/PublicPythonProjects/tree/main/svg2png)
-  * this program will convert any svg image to png. For more information see `svg2png.py`.
+  * this program will convert any svg image to png. 
+  * For more information see `svg2png.py`.
   * Reference: [Blog Post](https://www.spdevalk.nl/blog/post-a-new-public-github-repository-python/)
 * [appindicator](https://github.com/SjoerdV/PublicPythonProjects/tree/main/appindicator)
-  * this program will run a system tray icon which will detect if a certain process is running. It reports to the Desktop notification area and change the trays color when the process is found (or killed). It also features a right click context menu to kill all the processes of the kind it is monitoring. For more information see `appindicator.py`.
+  * this program will run a system tray icon which will detect if a certain process is running. It reports to the Desktop notification area and change the trays icon when the process is found (or killed). It also features a right click context menu to kill all the processes of the kind it is monitoring, or just exit the tray icon. Two programs are supplied
+    * `appindicator.py`: a cross-platform version that just loops the process list until a process is found to be running. This is very CPU intensive.
+    * `appindicator2.py`: a Linux-only version (might work on Mac as well but this is not tested) that uses inotify filesystem events to handle status changes, this is much more performant than looping the task list.
+  * For more information see either main programs
   * Reference: [Blog Post](https://www.spdevalk.nl/blog/post-a-new-public-github-repository-python/)
 * [add_keyphrases_to_jekyll_blog_post](https://github.com/SjoerdV/PublicPythonProjects/tree/main/add_keyphrases_to_jekyll_blog_post)
-  * this program will add or update the 'tags' metadata key that can be found in the YAML frontmatter of Jekyll static website pages. These pages are markdown formatted pages (with .md extension) and contains liquid elements and said YAML frontmatter. The KeyBERT and KeyphraseVectorizers modeling tools, being fed their configuration through an external JSON file, are used to generate these tags. Extensive documentation is available for both these tools to further your implementation. For more information see `add_keyphrases_to_jekyll_blog_post.py`.
+  * this program will add or update the 'tags' metadata key that can be found in the YAML frontmatter of Jekyll static website pages. These pages are markdown formatted pages (with .md extension) and contains liquid elements and said YAML frontmatter. The KeyBERT and KeyphraseVectorizers modeling tools, being fed their configuration through an external JSON file, are used to generate these tags. Extensive documentation is available for both these tools to further your implementation. 
+  * For more information see `add_keyphrases_to_jekyll_blog_post.py`.
   * Reference: [Blog Post](https://www.spdevalk.nl/blog/post-adding-key-phrases-to-jekyll-blog-posts-_-the-offline-edition/)
 * [mastodon_archiver](https://github.com/SjoerdV/PublicPythonProjects/tree/main/mastodon_archiver)
   * this program will make backups of your mastodon account(s) and clean-up certain collections that are more than 8 weeks old.
@@ -42,7 +47,8 @@ At the moment the following Projects are available.
   * this program will create a CAPTCHA version of text entered by you
   * Reference: [Blog Post](https://www.makeuseof.com/python-captcha-create/)
 * [auto_discussion_for_jekyl_blog_post](https://github.com/SjoerdV/PublicPythonProjects/tree/main/auto_discussion_for_jekyl_blog_post)
-  * this is a script for adding a GitHub Discussion for each Blog Post in a GitHub Pages repository and makes use of GitHub GraphQL. For more information see `auto_discussion_for_jekyl_blog_post.py`.
+  * this is a script for adding a GitHub Discussion for each Blog Post in a GitHub Pages repository and makes use of GitHub GraphQL. 
+  * For more information see `auto_discussion_for_jekyl_blog_post.py`.
   * Reference: [Blog Post](https://www.spdevalk.nl/blog/post-giscus-for-comments/)
 
 ### Changelog
@@ -53,6 +59,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 #### [Unreleased]
+
+#### [3.0.0] - 2024-05-18
+
+##### Added
+
+* Added '`appindicator2.py`' and '`appindicator2.sh`'
+
+##### Changed
+
+* Summary documentation in this file
+
+##### Removed
+
+* Nothing
 
 #### [2.0.0] - 2023-09-05
 
