@@ -83,7 +83,7 @@ def main(argv):
             print(help_message)
             sys.exit()
         elif opt in ("-c", "--confirm"):
-            print("WARNING: Expiring will execute for real! Data will be cleaned up for your mastodon account.")
+            print("WARNING: Expiring will execute FOR REAL! Make sure the dry-run produces no errors or terminate now. Data will be cleaned up for your mastodon account.")
             confirm_cmd = ' --confirmed'
 
     # Load JSON settings
@@ -127,6 +127,8 @@ def main(argv):
         cmd = f'mastodon-archive media --collection bookmarks --pace {user}'
         os.system(cmd)
 
+    # BEGIN WARNING: After the following code has been run in 'confirm' mode, data can not be recovered!
+
     print('\r\nExpire Statuses')
     for acc in json_object['accounts']:
         print(acc)
@@ -148,6 +150,8 @@ def main(argv):
         user=acc['user']
         cmd = f'mastodon-archive expire --older-than 8 --collection mentions --delete-other-notifications --pace{confirm_cmd} {user}' # needs '--confirmed' to work
         os.system(cmd)
+
+    # END WARNING
 
     print("\r\nGenerate HTML")
     for acc in json_object['accounts']:
