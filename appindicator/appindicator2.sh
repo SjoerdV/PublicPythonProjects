@@ -32,6 +32,7 @@ json=$(cat appindicator.json)
 progs=$(echo "$json" | jq -r '.Processes[].Name')
 
 # run program app indicators
+sleep 1
 count=0
 for prog in $progs;
 do
